@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -130,9 +131,9 @@ const VoiceLogger = ({ isOpen, onClose }: VoiceLoggerProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md mx-auto bg-white/10 dark:bg-black/20 backdrop-blur-xl border border-white/20 dark:border-blue-500/20 rounded-3xl shadow-2xl">
+      <DialogContent className="max-w-md mx-auto bg-gray-900 border border-gray-700 rounded-2xl">
         <DialogHeader>
-          <DialogTitle className="text-center text-xl font-bold text-gray-800 dark:text-white">
+          <DialogTitle className="text-center text-xl font-bold text-white">
             Voice Health Logger
           </DialogTitle>
         </DialogHeader>
@@ -144,8 +145,8 @@ const VoiceLogger = ({ isOpen, onClose }: VoiceLoggerProps) => {
               variant={isListening ? "default" : "secondary"}
               className={`px-4 py-2 rounded-full ${
                 isListening 
-                  ? "bg-blue-500 text-white animate-pulse shadow-lg shadow-blue-500/50" 
-                  : "bg-white/20 dark:bg-black/20 text-gray-700 dark:text-gray-300"
+                  ? "bg-blue-600 text-white border border-blue-500" 
+                  : "bg-gray-800 text-gray-300 border border-gray-600"
               }`}
             >
               {isListening ? "Listening..." : "Ready to Record"}
@@ -160,9 +161,9 @@ const VoiceLogger = ({ isOpen, onClose }: VoiceLoggerProps) => {
                 size="lg"
                 className={`w-20 h-20 rounded-full ${
                   isListening 
-                    ? "bg-blue-500 hover:bg-blue-600 animate-pulse shadow-lg shadow-blue-500/50" 
-                    : "bg-blue-500 hover:bg-blue-600 shadow-lg shadow-blue-500/30"
-                } transition-all duration-300 border-2 border-white/20`}
+                    ? "bg-blue-600 hover:bg-blue-700 border border-blue-500" 
+                    : "bg-blue-600 hover:bg-blue-700 border border-blue-500"
+                } transition-all duration-300`}
               >
                 {isListening ? (
                   <MicOff className="w-8 h-8 text-white" />
@@ -171,7 +172,7 @@ const VoiceLogger = ({ isOpen, onClose }: VoiceLoggerProps) => {
                 )}
               </Button>
             </div>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-gray-400">
               {isListening 
                 ? "Speak now... (e.g., 'Blood pressure 130 over 80', 'Took diabetes medication', 'Feeling tired')"
                 : "Tap the microphone to start recording"
@@ -181,9 +182,9 @@ const VoiceLogger = ({ isOpen, onClose }: VoiceLoggerProps) => {
 
           {/* Transcript Display */}
           {transcript && (
-            <div className="p-4 bg-white/10 dark:bg-black/10 rounded-2xl backdrop-blur-sm border border-white/20 dark:border-blue-500/20">
-              <h4 className="font-medium text-gray-800 dark:text-white mb-2">Recorded:</h4>
-              <p className="text-gray-700 dark:text-gray-300">{transcript}</p>
+            <div className="p-4 bg-gray-800 rounded-xl border border-gray-700">
+              <h4 className="font-medium text-white mb-2">Recorded:</h4>
+              <p className="text-gray-300">{transcript}</p>
             </div>
           )}
 
@@ -192,7 +193,7 @@ const VoiceLogger = ({ isOpen, onClose }: VoiceLoggerProps) => {
             <Button
               onClick={clearTranscript}
               variant="outline"
-              className="flex-1 rounded-full bg-white/10 dark:bg-black/10 border-white/20 dark:border-blue-500/20 text-gray-700 dark:text-gray-300 hover:bg-white/20 dark:hover:bg-black/20"
+              className="flex-1 rounded-xl bg-gray-800 border-gray-600 text-gray-300 hover:bg-gray-700"
               disabled={!transcript}
             >
               <Trash2 className="w-4 h-4 mr-2" />
@@ -200,7 +201,7 @@ const VoiceLogger = ({ isOpen, onClose }: VoiceLoggerProps) => {
             </Button>
             <Button
               onClick={saveLog}
-              className="flex-1 bg-blue-500 hover:bg-blue-600 rounded-full shadow-lg shadow-blue-500/30"
+              className="flex-1 bg-blue-600 hover:bg-blue-700 rounded-xl"
               disabled={!transcript}
             >
               <Save className="w-4 h-4 mr-2" />
@@ -210,11 +211,11 @@ const VoiceLogger = ({ isOpen, onClose }: VoiceLoggerProps) => {
 
           {/* Quick Examples */}
           <div className="text-center">
-            <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Quick examples to try:</p>
+            <p className="text-xs text-gray-500 mb-2">Quick examples to try:</p>
             <div className="flex flex-wrap gap-2 justify-center">
-              <Badge variant="outline" className="text-xs rounded-full border-white/20 dark:border-blue-500/20 bg-white/5 dark:bg-black/5">Blood sugar 120</Badge>
-              <Badge variant="outline" className="text-xs rounded-full border-white/20 dark:border-blue-500/20 bg-white/5 dark:bg-black/5">Took insulin</Badge>
-              <Badge variant="outline" className="text-xs rounded-full border-white/20 dark:border-blue-500/20 bg-white/5 dark:bg-black/5">Had lunch</Badge>
+              <Badge variant="outline" className="text-xs rounded-full border-gray-600 bg-gray-800 text-gray-300">Blood sugar 120</Badge>
+              <Badge variant="outline" className="text-xs rounded-full border-gray-600 bg-gray-800 text-gray-300">Took insulin</Badge>
+              <Badge variant="outline" className="text-xs rounded-full border-gray-600 bg-gray-800 text-gray-300">Had lunch</Badge>
             </div>
           </div>
         </div>
