@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -14,8 +13,8 @@ interface VoiceLoggerProps {
 // Extend Window interface to include webkitSpeechRecognition
 declare global {
   interface Window {
-    webkitSpeechRecognition: typeof SpeechRecognition;
-    SpeechRecognition: typeof SpeechRecognition;
+    webkitSpeechRecognition: any;
+    SpeechRecognition: any;
   }
 }
 
@@ -28,7 +27,7 @@ interface SpeechRecognitionErrorEvent extends Event {
   error: string;
 }
 
-interface SpeechRecognition extends EventTarget {
+interface ISpeechRecognition extends EventTarget {
   continuous: boolean;
   interimResults: boolean;
   lang: string;
@@ -42,13 +41,13 @@ interface SpeechRecognition extends EventTarget {
 const VoiceLogger = ({ isOpen, onClose }: VoiceLoggerProps) => {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState("");
-  const [recognition, setRecognition] = useState<SpeechRecognition | null>(null);
+  const [recognition, setRecognition] = useState<ISpeechRecognition | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
     if (typeof window !== "undefined" && ("webkitSpeechRecognition" in window || "SpeechRecognition" in window)) {
       const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
-      const speechRecognition = new SpeechRecognitionAPI();
+      const speechRecognition = new SpeechRecognitionAPI() as ISpeechRecognition;
       speechRecognition.continuous = true;
       speechRecognition.interimResults = true;
       speechRecognition.lang = "en-US";
