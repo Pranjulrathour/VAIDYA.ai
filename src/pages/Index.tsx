@@ -16,8 +16,12 @@ import {
   User,
   Settings,
   MessageCircle,
-  Brain
+  Brain,
+  FileText,
+  CheckSquare,
+  ArrowRight
 } from "lucide-react";
+import { Link } from "react-router-dom";
 import VoiceLogger from "@/components/VoiceLogger";
 import HealthMetrics from "@/components/HealthMetrics";
 import DailySchedule from "@/components/DailySchedule";
@@ -26,6 +30,33 @@ import ThemeToggle from "@/components/ThemeToggle";
 
 const Index = () => {
   const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
+
+  const mainFeatures = [
+    {
+      title: "AI Chatbot",
+      description: "Chat with your personal health assistant",
+      icon: Brain,
+      link: "/chatbot",
+      color: "bg-blue-600 hover:bg-blue-700",
+      iconColor: "text-blue-500"
+    },
+    {
+      title: "AI Reports",
+      description: "Generate detailed health insights",
+      icon: FileText,
+      link: "/reports",
+      color: "bg-green-600 hover:bg-green-700",
+      iconColor: "text-green-500"
+    },
+    {
+      title: "Daily Tasks",
+      description: "Manage your health schedule",
+      icon: CheckSquare,
+      link: "/tasks",
+      color: "bg-purple-600 hover:bg-purple-700",
+      iconColor: "text-purple-500"
+    }
+  ];
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -48,7 +79,7 @@ const Index = () => {
               <Button
                 variant="ghost"
                 size="icon"
-                className="rounded-xl border border-gray-700 hover:border-blue-500 hover:bg-gray-900"
+                className="rounded-xl border border-gray-700 hover:border-blue-500 hover: bg-gray-900"
               >
                 <MessageCircle className="w-5 h-5 text-gray-300" />
               </Button>
@@ -92,6 +123,30 @@ const Index = () => {
           </Card>
         </div>
 
+        {/* Main Features */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          {mainFeatures.map((feature) => {
+            const IconComponent = feature.icon;
+            return (
+              <Link key={feature.title} to={feature.link}>
+                <Card className="border-gray-800 bg-gray-900/50 hover:bg-gray-800/50 transition-all duration-300 h-full group">
+                  <CardContent className="p-6 text-center">
+                    <div className="w-16 h-16 mx-auto mb-4 bg-gray-800/50 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <IconComponent className={`w-8 h-8 ${feature.iconColor}`} />
+                    </div>
+                    <h3 className="text-xl font-bold text-white mb-2">{feature.title}</h3>
+                    <p className="text-gray-400 mb-4">{feature.description}</p>
+                    <Button className={`w-full ${feature.color} group-hover:shadow-lg transition-all`}>
+                      <span>Open</span>
+                      <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                    </Button>
+                  </CardContent>
+                </Card>
+              </Link>
+            );
+          })}
+        </div>
+
         {/* Quick Stats */}
         <QuickStats />
 
@@ -104,18 +159,6 @@ const Index = () => {
           >
             <Mic className="w-6 h-6 md:w-8 md:h-8 mr-3" />
             <span className="text-lg md:text-xl font-semibold">Tap to Log Health Data</span>
-          </Button>
-        </div>
-
-        {/* AI Chat Button */}
-        <div className="flex justify-center">
-          <Button
-            variant="outline"
-            size="lg"
-            className="bg-gray-900/50 border-gray-700 text-gray-300 hover:bg-gray-800 hover:border-blue-500 rounded-xl px-6 py-4"
-          >
-            <Brain className="w-5 h-5 mr-2" />
-            Chat with AI Assistant
           </Button>
         </div>
 
