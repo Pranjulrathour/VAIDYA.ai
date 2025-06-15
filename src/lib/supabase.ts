@@ -1,12 +1,14 @@
-
 import { createClient } from '@supabase/supabase-js';
-import { ENV_CONFIG } from '@/config/env';
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Supabase URL and anonymous key are required.');
+}
 
 // Create Supabase client
-export const supabase = createClient(
-  ENV_CONFIG.SUPABASE_URL,
-  ENV_CONFIG.SUPABASE_ANON_KEY
-);
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Database table types (you can expand these as needed)
 export interface HealthLog {
