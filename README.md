@@ -191,7 +191,38 @@ The application can be deployed to various platforms:
 - AWS Amplify
 - Any static hosting service
 
-Make sure to set up environment variables in your deployment platform.
+### Environment Variables for Deployment
+
+Make sure to set up the following environment variables in your deployment platform:
+
+```env
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
+VITE_GEMINI_API_KEY=your-gemini-api-key
+```
+
+### Deployment Troubleshooting
+
+If you encounter "Supabase URL and anonymous key are required" error:
+
+1. **Check Environment Variables**: Ensure all environment variables are properly set in your deployment platform
+2. **Variable Names**: Make sure variable names start with `VITE_` prefix
+3. **No Quotes**: Don't wrap values in quotes in the deployment platform
+4. **Rebuild**: After adding environment variables, trigger a new deployment
+5. **Check Logs**: Review deployment logs for any environment variable loading issues
+
+### Platform-Specific Instructions
+
+#### Vercel
+1. Go to your project settings
+2. Navigate to "Environment Variables"
+3. Add each variable with the `VITE_` prefix
+4. Redeploy your application
+
+#### Netlify
+1. Go to Site settings > Environment variables
+2. Add each variable individually
+3. Trigger a new deploy
 
 ---
 

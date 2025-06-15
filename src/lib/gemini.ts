@@ -1,5 +1,5 @@
-
-import { ENV_CONFIG } from '@/config/env';
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent";
 
 export interface GeminiResponse {
   candidates: Array<{
@@ -13,11 +13,11 @@ export interface GeminiResponse {
 
 export const callGeminiAPI = async (prompt: string): Promise<string> => {
   try {
-    if (!ENV_CONFIG.GEMINI_API_KEY || ENV_CONFIG.GEMINI_API_KEY.includes('your-')) {
-      throw new Error('Gemini API key not configured. Please update src/config/env.ts');
+    if (!GEMINI_API_KEY || GEMINI_API_KEY.includes('your-')) {
+      throw new Error('Gemini API key not configured. Please update your environment variables');
     }
 
-    const response = await fetch(`${ENV_CONFIG.GEMINI_API_URL}?key=${ENV_CONFIG.GEMINI_API_KEY}`, {
+    const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -1,14 +1,36 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Get environment variables with fallbacks
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Supabase URL and anonymous key are required.');
+// Validate environment variables
+if (!supabaseUrl || supabaseUrl === 'undefined' || supabaseUrl.includes('your-project')) {
+  console.error('Invalid Supabase URL:', supabaseUrl);
+  throw new Error('VITE_SUPABASE_URL is not properly configured. Please check your environment variables.');
 }
 
-// Create Supabase client
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+if (!supabaseAnonKey || supabaseAnonKey === 'undefined' || supabaseAnonKey.includes('your-supabase')) {
+  console.error('Invalid Supabase anonymous key');
+  throw new Error('VITE_SUPABASE_ANON_KEY is not properly configured. Please check your environment variables.');
+}
+
+// Create Supabase client with error handling
+let supabase: ReturnType<typeof createClient>;
+
+try {
+  supabase = createClient(supabaseUrl, supabaseAnonKey, {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+    },
+  });
+} catch (error) {
+  console.error('Failed to initialize Supabase client:', error);
+  throw new Error('Failed to initialize Supabase client. Please check your configuration.');
+}
+
+export { supabase };
 
 // Database table types (you can expand these as needed)
 export interface HealthLog {
