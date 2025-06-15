@@ -1,0 +1,64 @@
+import { useState, useEffect } from 'react';
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { Toaster } from "@/components/ui/toaster";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ThemeProvider } from "@/contexts/ThemeContext";
+import { Layout } from "@/components/Layout";
+import Index from "./pages/Index";
+import NotFound from "./pages/NotFound";
+import ChatBot from "./pages/ChatBot";
+import ReportGenerator from "./pages/ReportGenerator";
+import DailyTasks from "./pages/DailyTasks";
+import AuthPage from './pages/Auth';
+import { supabase } from './lib/supabaseClient';
+import { Session } from '@supabase/supabase-js';
+import { SessionContext } from './contexts/SessionContext';
+
+const queryClient = new QueryClient();
+
+const App = () => {
+  const [session, setSession] = useState<Session | null>(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
+        <TooltipProvider>
+          <Toaster />
+          
+          {!session ? (
+            <AuthPage />
+          ) : (
+            <SessionContext.Provider value={session}>
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/" element={<Layout title="Dashboard"><Index /></Layout>} />
+                  <Route path="/chatbot" element={<Layout title="AI Assistant"><ChatBot /></Layout>} />
+                  <Route path="/reports" element={<Layout title="Smart Reports"><ReportGenerator /></Layout>} />
+                  <Route path="/tasks" element={<Layout title="Daily Wellness"><DailyTasks /></Layout>} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </BrowserRouter>
+            </SessionContext.Provider>
+          )}
+        </TooltipProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
+  );
+};
+
+export default App;

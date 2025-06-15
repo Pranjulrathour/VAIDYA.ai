@@ -21,9 +21,9 @@ const QuickStats = () => {
       label: "Energy Level",
       value: "Excellent",
       icon: Zap,
-      gradient: "from-yellow-500 to-orange-500",
-      bgGradient: "from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20",
-      border: "border-yellow-200 dark:border-yellow-800/30"
+          gradient: "from-blue-500 to-blue-600",
+    bgGradient: "from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20",
+    border: "border-blue-200 dark:border-blue-800/30"
     },
     {
       label: "Health Score",

@@ -1,73 +1,198 @@
-# Welcome to your Lovable project
+# VAIDYA.ai - AI-Powered Health Assistant
 
-## Project info
+A modern health management platform that combines AI-powered insights with comprehensive health tracking. Built with React, TypeScript, Supabase, and Google's Gemini AI.
 
-**URL**: https://lovable.dev/projects/a22f9676-98c5-4ff4-9339-48747157ca32
+## 🌟 Features
 
-## How can I edit this code?
+- **AI Health Assistant**: Chat with an intelligent health assistant powered by Google Gemini AI
+- **Health Report Analysis**: Upload health reports and get AI-powered analysis with health scores
+- **Health Statistics**: Track your health journey with comprehensive stats and insights
+- **Secure Authentication**: User authentication and data security with Supabase
+- **File Upload**: Secure file storage for health documents
+- **Responsive Design**: Modern, mobile-first design with Tailwind CSS
+- **Real-time Insights**: Get personalized health recommendations based on your data
 
-There are several ways of editing your application.
+## 🚀 Tech Stack
 
-**Use Lovable**
+- **Frontend**: React 18, TypeScript, Vite
+- **Styling**: Tailwind CSS, Shadcn/ui components
+- **Backend**: Supabase (Database, Authentication, Storage)
+- **AI**: Google Gemini AI for health analysis and chat
+- **Animations**: Framer Motion
+- **State Management**: React Context API
+- **Routing**: React Router DOM
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/a22f9676-98c5-4ff4-9339-48747157ca32) and start prompting.
+## 📋 Prerequisites
 
-Changes made via Lovable will be committed automatically to this repo.
+- Node.js 18+ and npm
+- Supabase account
+- Google AI API key (Gemini)
 
-**Use your preferred IDE**
+## 🛠️ Installation
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd health-smart-aid
+   ```
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-Follow these steps:
+3. **Set up environment variables**
+   Create a `.env` file in the root directory:
+   ```env
+   VITE_SUPABASE_URL=your_supabase_url
+   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+   VITE_GEMINI_API_KEY=your_gemini_api_key
+   ```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+4. **Set up Supabase database**
+   Run the SQL script in your Supabase SQL editor:
+   ```bash
+   # Copy the contents of supabase_setup.sql and run in Supabase SQL editor
+   ```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+5. **Start the development server**
+   ```bash
+   npm run dev
+   ```
 
-# Step 3: Install the necessary dependencies.
-npm i
+## 🗄️ Database Setup
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+The application requires the following database structure:
+
+### Tables
+- `health_reports`: Stores user health reports and AI analysis
+- `auth.users`: Supabase authentication (automatically created)
+
+### Storage
+- `health-reports`: Bucket for storing uploaded health documents
+
+Run the `supabase_setup.sql` script in your Supabase project to create all necessary tables, policies, and storage buckets.
+
+## 🔑 API Keys Setup
+
+### Google Gemini AI
+1. Go to [Google AI Studio](https://makersuite.google.com/app/apikey)
+2. Create a new API key
+3. Add it to your `.env` file as `VITE_GEMINI_API_KEY`
+
+### Supabase
+1. Create a new project at [Supabase](https://supabase.com)
+2. Go to Settings > API
+3. Copy your project URL and anon key
+4. Add them to your `.env` file
+
+## 🎨 Features Overview
+
+### 1. Landing Page
+- Modern, responsive design with animations
+- Brand showcase with VAIDYA.ai branding
+- Feature highlights and call-to-action sections
+
+### 2. AI Health Assistant
+- Real-time chat with Gemini AI
+- Health-focused responses and recommendations
+- Conversation context awareness
+- Professional medical disclaimers
+
+### 3. Health Report Analysis
+- Upload health reports (PDF, DOC, images)
+- AI-powered analysis with health scores
+- Key findings and recommendations extraction
+- Risk factor identification
+- Progress tracking over time
+
+### 4. Dashboard
+- Personalized health insights
+- Health score tracking
+- AI-generated recommendations
+- Quick access to all features
+
+### 5. Health Statistics
+- Comprehensive health metrics
+- Score history and trends
+- Top recommendations aggregation
+- Risk factor monitoring
+
+## 🔒 Security Features
+
+- Row Level Security (RLS) policies
+- User data isolation
+- Secure file upload and storage
+- Authentication-protected routes
+- Environment variable protection
+
+## 🎯 Usage
+
+1. **Sign Up/Login**: Create an account or login with existing credentials
+2. **Upload Health Report**: Go to Reports section and upload your health documents
+3. **AI Analysis**: The system automatically analyzes your reports using Gemini AI
+4. **View Insights**: Check your dashboard for personalized health insights
+5. **Chat with AI**: Use the chatbot for health-related questions
+6. **Track Progress**: Monitor your health scores and trends over time
+
+## 📱 Responsive Design
+
+The application is fully responsive and works seamlessly on:
+- Desktop computers
+- Tablets
+- Mobile phones
+- Various screen sizes and orientations
+
+## 🔧 Development
+
+### Available Scripts
+
+- `npm run dev`: Start development server
+- `npm run build`: Build for production
+- `npm run preview`: Preview production build
+- `npm run lint`: Run ESLint
+
+### Project Structure
+
+```
+src/
+├── components/          # Reusable UI components
+├── contexts/           # React context providers
+├── hooks/              # Custom React hooks
+├── lib/                # Utility libraries and services
+├── pages/              # Page components
+└── styles/             # Global styles
 ```
 
-**Edit a file directly in GitHub**
+## 🤝 Contributing
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
 
-**Use GitHub Codespaces**
+## 📄 License
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+This project is licensed under the MIT License.
 
-## What technologies are used for this project?
+## 🆘 Support
 
-This project is built with:
+For support and questions:
+- Create an issue in the repository
+- Contact the development team
+- Check the documentation
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 🚀 Deployment
 
-## How can I deploy this project?
+The application can be deployed to various platforms:
+- Vercel (recommended)
+- Netlify
+- AWS Amplify
+- Any static hosting service
 
-Simply open [Lovable](https://lovable.dev/projects/a22f9676-98c5-4ff4-9339-48747157ca32) and click on Share -> Publish.
+Make sure to set up environment variables in your deployment platform.
 
-## Can I connect a custom domain to my Lovable project?
+---
 
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+**VAIDYA.ai** - Transforming healthcare with AI-powered insights and personalized health management.

@@ -1,4 +1,12 @@
-import type { Config } from "tailwindcss";
+import { type Config } from "tailwindcss";
+
+const colors = {
+  brand: {
+    blue: '#3B82F6',
+    black: '#000000',
+    white: '#FFFFFF',
+  },
+};
 
 export default {
 	darkMode: ["class"],
@@ -10,6 +18,9 @@ export default {
 	],
 	prefix: "",
 	theme: {
+		fontFamily: {
+			recoleta: ['Recoleta', 'system-ui', 'sans-serif'],
+		},
 		container: {
 			center: true,
 			padding: '2rem',
@@ -19,6 +30,7 @@ export default {
 		},
 		extend: {
 			colors: {
+				...colors,
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',

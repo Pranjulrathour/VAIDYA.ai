@@ -1,219 +1,472 @@
-
-import { useState } from "react";
+import { useSession } from "@/contexts/SessionContext";
+import { useState, useEffect } from "react";
+import HealthMetrics from "@/components/HealthMetrics";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { 
-  Heart, 
-  Mic, 
+  Bot, 
+  ClipboardList, 
   Activity, 
-  Droplets, 
-  User,
-  Settings,
-  MessageCircle,
+  FileText, 
+  TrendingUp, 
+  AlertTriangle, 
+  Plus, 
+  Heart,
   Brain,
-  FileText,
-  CheckSquare,
-  ArrowRight,
+  Shield,
+  Calendar,
+  Clock,
   Target,
   Zap,
-  Shield,
-  TrendingUp,
-  Bell
+  Award,
+  Users,
+  MessageCircle
 } from "lucide-react";
-import { Link } from "react-router-dom";
-import VoiceLogger from "@/components/VoiceLogger";
-import HealthMetrics from "@/components/HealthMetrics";
-import DailySchedule from "@/components/DailySchedule";
-import QuickStats from "@/components/QuickStats";
-import ThemeToggle from "@/components/ThemeToggle";
+import { useNavigate } from "react-router-dom";
+import { getHealthStats, HealthStats } from "@/lib/healthReportService";
+import { generateHealthInsights } from "@/lib/geminiClient";
 
 const Index = () => {
-  const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
+  const { session } = useSession();
+  const navigate = useNavigate();
+  const [healthStats, setHealthStats] = useState<HealthStats | null>(null);
+  const [aiInsights, setAiInsights] = useState<string[]>([]);
+  const [isLoadingInsights, setIsLoadingInsights] = useState(false);
+  const userName = session?.user?.user_metadata?.full_name || "User";
 
-  const mainFeatures = [
+  // Dummy data for better UI demonstration
+  const dummyHealthData = {
+    totalReports: 12,
+    latestScore: 85,
+    averageHealthScore: 78,
+    riskFactors: [
+      "Elevated blood pressure readings",
+      "Irregular sleep patterns",
+      "Low vitamin D levels"
+    ]
+  };
+
+  const dummyInsights = [
+    "Your cardiovascular health has improved by 15% over the last month",
+    "Consider increasing your daily water intake to 8-10 glasses",
+    "Your sleep quality metrics show consistent improvement",
+    "Regular exercise routine is positively impacting your overall health score",
+    "Vitamin D supplementation is recommended based on recent lab results"
+  ];
+
+  useEffect(() => {
+    loadHealthData();
+  }, []);
+
+  const loadHealthData = async () => {
+    try {
+      const stats = await getHealthStats();
+      setHealthStats(stats);
+      
+      // Use dummy insights for demonstration
+      setAiInsights(dummyInsights);
+      
+      // Generate AI insights if we have health data
+      if (stats && stats.totalReports > 0) {
+        setIsLoadingInsights(true);
+        try {
+          const insights = await generateHealthInsights(stats);
+          setAiInsights(insights);
+        } catch (error) {
+          console.error('Error generating insights:', error);
+          // Fallback to dummy insights
+          setAiInsights(dummyInsights);
+        } finally {
+          setIsLoadingInsights(false);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading health data:', error);
+      // Use dummy data for demonstration
+      setHealthStats(dummyHealthData);
+      setAiInsights(dummyInsights);
+    }
+  };
+
+  const quickAccessItems = [
     {
       title: "AI Health Assistant",
-      description: "Get personalized health guidance and support",
-      icon: Brain,
-      link: "/chatbot",
-      gradient: "from-blue-500 to-cyan-500",
+      icon: Bot,
+      path: "/dashboard/chatbot",
+      description: "Get instant medical advice and health guidance.",
+      color: "bg-gradient-to-br from-blue-50 to-blue-100 text-blue-700 border-blue-200 hover:from-blue-100 hover:to-blue-200",
       iconColor: "text-blue-600"
     },
     {
-      title: "Smart Reports",
-      description: "AI-powered health insights and analytics",
+      title: "Upload Health Report",
       icon: FileText,
-      link: "/reports",
-      gradient: "from-emerald-500 to-teal-500",
-      iconColor: "text-emerald-600"
+      path: "/dashboard/reports",
+      description: "Upload and analyze your health reports with AI.",
+      color: "bg-gradient-to-br from-green-50 to-green-100 text-green-700 border-green-200 hover:from-green-100 hover:to-green-200",
+      iconColor: "text-green-600"
     },
     {
-      title: "Daily Wellness",
-      description: "Track habits and manage your health routine",
-      icon: CheckSquare,
-      link: "/tasks",
-      gradient: "from-violet-500 to-purple-500",
-      iconColor: "text-violet-600"
+      title: "Daily Tasks",
+      icon: ClipboardList,
+      path: "/dashboard/tasks",
+      description: "Track your wellness goals and daily habits.",
+      color: "bg-gradient-to-br from-purple-50 to-purple-100 text-purple-700 border-purple-200 hover:from-purple-100 hover:to-purple-200",
+      iconColor: "text-purple-600"
+    },
+  ];
+
+  const healthMetrics = [
+    {
+      title: "Heart Rate",
+      value: "72 BPM",
+      change: "+2%",
+      icon: Heart,
+      color: "text-red-600 bg-red-100",
+      trend: "up"
+    },
+    {
+      title: "Sleep Quality",
+      value: "8.2/10",
+      change: "+5%",
+      icon: Brain,
+      color: "text-purple-600 bg-purple-100",
+      trend: "up"
+    },
+    {
+      title: "Stress Level",
+      value: "Low",
+      change: "-12%",
+      icon: Shield,
+      color: "text-green-600 bg-green-100",
+      trend: "down"
+    },
+    {
+      title: "Activity Score",
+      value: "850 pts",
+      change: "+8%",
+      icon: Zap,
+      color: "text-orange-600 bg-orange-100",
+      trend: "up"
     }
   ];
 
+  const recentActivities = [
+    {
+      type: "report",
+      title: "Blood Test Results Analyzed",
+      time: "2 hours ago",
+      icon: FileText,
+      color: "bg-blue-100 text-blue-600"
+    },
+    {
+      type: "task",
+      title: "Morning Meditation Completed",
+      time: "4 hours ago",
+      icon: Target,
+      color: "bg-green-100 text-green-600"
+    },
+    {
+      type: "chat",
+      title: "AI Health Consultation",
+      time: "1 day ago",
+      icon: MessageCircle,
+      color: "bg-purple-100 text-purple-600"
+    },
+    {
+      type: "achievement",
+      title: "7-Day Streak Achievement",
+      time: "2 days ago",
+      icon: Award,
+      color: "bg-blue-100 text-blue-600"
+    }
+  ];
+
+  const getHealthScoreColor = (score: number) => {
+    if (score >= 80) return "text-green-600 bg-green-100";
+    if (score >= 60) return "text-blue-600 bg-blue-100";
+    return "text-red-600 bg-red-100";
+  };
+
+  const displayStats = healthStats || dummyHealthData;
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-950 dark:to-blue-950">
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-white/80 dark:bg-gray-950/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="relative">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center shadow-lg">
-                  <Heart className="w-6 h-6 text-white" />
+    <div className="space-y-8">
+      {/* Welcome Section */}
+      <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 p-8 rounded-2xl text-white shadow-xl">
+        <div className="flex items-center justify-between">
+      <div>
+            <h1 className="text-4xl font-bold mb-2">Welcome back, {userName}! 👋</h1>
+            <p className="text-blue-100 text-lg">Here's your personalized health dashboard powered by AI.</p>
+            <div className="flex items-center gap-4 mt-4">
+              <Badge className="bg-white/20 text-white border-white/30">
+                <Calendar className="w-4 h-4 mr-1" />
+                {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+              </Badge>
+              <Badge className="bg-white/20 text-white border-white/30">
+                <Clock className="w-4 h-4 mr-1" />
+                {new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+              </Badge>
+            </div>
+          </div>
+          <div className="hidden md:block">
+            <div className="w-32 h-32 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm">
+              <Activity className="w-16 h-16 text-white" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Health Stats Overview */}
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        {healthMetrics.map((metric, index) => (
+          <Card key={index} className="hover:shadow-lg transition-all duration-300 border-0 shadow-md">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">{metric.title}</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="text-2xl font-bold text-gray-800">{metric.value}</span>
+                    <Badge 
+                      variant="outline" 
+                      className={`text-xs ${metric.trend === 'up' ? 'text-green-600 border-green-200' : 'text-red-600 border-red-200'}`}
+                    >
+                      {metric.change}
+                    </Badge>
+                  </div>
                 </div>
-                <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white dark:border-gray-950"></div>
+                <div className={`p-3 rounded-full ${metric.color}`}>
+                  <metric.icon className="h-6 w-6" />
+                </div>
               </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Main Health Score */}
+      <div className="grid gap-6 md:grid-cols-3">
+        <Card className="hover:shadow-lg transition-all duration-300 border-0 shadow-md">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
-                  VAIDYA
-                </h1>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Your AI Health Companion</p>
+                <p className="text-sm font-medium text-gray-600">Overall Health Score</p>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className={`text-3xl font-bold ${getHealthScoreColor(displayStats.latestScore).split(' ')[0]}`}>
+                    {displayStats.latestScore}
+                  </span>
+                  <Badge variant="outline" className="text-xs text-green-600 border-green-200">
+                    +5 this week
+                  </Badge>
+                </div>
+                <Progress value={displayStats.latestScore} className="mt-3" />
+              </div>
+              <div className={`p-4 rounded-full ${getHealthScoreColor(displayStats.latestScore).split(' ')[1]}`}>
+                <Activity className={`h-8 w-8 ${getHealthScoreColor(displayStats.latestScore).split(' ')[0]}`} />
               </div>
             </div>
-            <div className="flex items-center space-x-2">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 relative"
-              >
-                <Bell className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-                <div className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></div>
-              </Button>
-              <ThemeToggle />
-              <Button
-                variant="ghost"
-                size="icon"
-                className="rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800"
-              >
-                <Settings className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800"
-              >
-                <User className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <main className="container mx-auto px-4 py-8 space-y-8">
-        {/* Welcome Section */}
-        <div className="text-center space-y-6">
-          <div className="space-y-3">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">
-              Good Morning, <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">Alex</span>
-            </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-              Let's take care of your health today with personalized insights and gentle reminders
-            </p>
-          </div>
-          <div className="flex justify-center">
-            <Badge 
-              variant="secondary" 
-              className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-500/30 rounded-full px-6 py-2 text-sm font-medium"
-            >
-              <Activity className="w-4 h-4 mr-2" />
-              Diabetes Management • Day 7
-            </Badge>
-          </div>
-        </div>
-
-        {/* Main Features */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {mainFeatures.map((feature) => {
-            const IconComponent = feature.icon;
-            return (
-              <Link key={feature.title} to={feature.link} className="group">
-                <Card className="h-full border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white/70 dark:bg-gray-900/70 backdrop-blur-sm hover:scale-105">
-                  <CardContent className="p-8 text-center">
-                    <div className={`w-16 h-16 mx-auto mb-6 bg-gradient-to-br ${feature.gradient} rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                      <IconComponent className="w-8 h-8 text-white" />
-                    </div>
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">{feature.title}</h3>
-                    <p className="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">{feature.description}</p>
-                    <Button className="w-full bg-gradient-to-r from-gray-900 to-gray-700 hover:from-gray-800 hover:to-gray-600 dark:from-white dark:to-gray-200 dark:hover:from-gray-100 dark:hover:to-gray-300 text-white dark:text-gray-900 rounded-xl py-3 font-medium group-hover:shadow-lg transition-all">
-                      Get Started
-                      <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                    </Button>
-                  </CardContent>
-                </Card>
-              </Link>
-            );
-          })}
-        </div>
-
-        {/* Quick Stats */}
-        <QuickStats />
-
-        {/* Voice Logger Button */}
-        <div className="flex justify-center">
-          <Button
-            onClick={() => setIsVoiceModalOpen(true)}
-            size="lg"
-            className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white px-12 py-6 rounded-2xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 border-0"
-          >
-            <Mic className="w-6 h-6 mr-3" />
-            Log Health Data
-          </Button>
-        </div>
-
-        {/* Health Metrics Dashboard */}
-        <HealthMetrics />
-
-        {/* Daily Schedule */}
-        <DailySchedule />
-
-        {/* Today's Progress */}
-        <Card className="border-0 shadow-lg bg-white/70 dark:bg-gray-900/70 backdrop-blur-sm rounded-2xl">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3 text-gray-900 dark:text-white text-xl">
-              <div className="p-2 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500">
-                <TrendingUp className="w-5 h-5 text-white" />
-              </div>
-              Today's Progress
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-3">
-              <div className="flex justify-between text-gray-700 dark:text-gray-300">
-                <span className="font-medium">Daily Goals Completed</span>
-                <span className="font-bold text-blue-600 dark:text-blue-400">7/10</span>
-              </div>
-              <Progress value={70} className="h-3 rounded-full" />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-2xl border border-blue-100 dark:border-blue-800/30">
-                <Activity className="w-6 h-6 text-blue-600 dark:text-blue-400 mx-auto mb-3" />
-                <div className="font-semibold text-gray-900 dark:text-white">Steps</div>
-                <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">8,247 / 10,000</div>
-              </div>
-              <div className="text-center p-6 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 rounded-2xl border border-emerald-100 dark:border-emerald-800/30">
-                <Droplets className="w-6 h-6 text-emerald-600 dark:text-emerald-400 mx-auto mb-3" />
-                <div className="font-semibold text-gray-900 dark:text-white">Water</div>
-                <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">6 / 8 glasses</div>
-              </div>
-    </div>
           </CardContent>
         </Card>
-      </main>
 
-      {/* Voice Logger Modal */}
-      <VoiceLogger 
-        isOpen={isVoiceModalOpen} 
-        onClose={() => setIsVoiceModalOpen(false)} 
-      />
+        <Card className="hover:shadow-lg transition-all duration-300 border-0 shadow-md">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Average Score</p>
+                <span className="text-3xl font-bold text-blue-600">
+                  {displayStats.averageHealthScore}
+                </span>
+                <Progress value={displayStats.averageHealthScore} className="mt-3" />
+              </div>
+              <div className="p-4 rounded-full bg-blue-100">
+                <TrendingUp className="h-8 w-8 text-blue-600" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-lg transition-all duration-300 border-0 shadow-md">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Total Reports</p>
+                <span className="text-3xl font-bold text-purple-600">
+                  {displayStats.totalReports}
+                </span>
+                <p className="text-xs text-gray-500 mt-2">Last updated today</p>
+              </div>
+              <div className="p-4 rounded-full bg-purple-100">
+                <FileText className="h-8 w-8 text-purple-600" />
+              </div>
+            </div>
+            </CardContent>
+        </Card>
+      </div>
+
+      {/* AI Health Insights */}
+      <Card className="border-0 shadow-lg bg-gradient-to-r from-blue-50 to-purple-50">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-3">
+            <div className="p-2 rounded-full bg-blue-100">
+              <Bot className="h-6 w-6 text-blue-600" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold">AI Health Insights</h3>
+              <p className="text-sm text-gray-600 font-normal">Personalized recommendations based on your health data</p>
+            </div>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 md:grid-cols-2">
+            {aiInsights.slice(0, 4).map((insight, idx) => (
+              <div key={idx} className="flex items-start gap-3 p-4 bg-white rounded-xl shadow-sm border border-blue-100">
+                <div className="w-2 h-2 rounded-full bg-blue-500 mt-2 flex-shrink-0"></div>
+                <p className="text-sm text-gray-700 leading-relaxed">{insight}</p>
+              </div>
+            ))}
+          </div>
+          {aiInsights.length > 4 && (
+            <Button variant="outline" className="mt-4 w-full" onClick={() => navigate('/dashboard/chatbot')}>
+              <Bot className="w-4 h-4 mr-2" />
+              View All Insights
+            </Button>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Risk Factors Alert */}
+      {displayStats.riskFactors && displayStats.riskFactors.length > 0 && (
+        <Card className="border-red-200 bg-gradient-to-r from-red-50 to-pink-50 shadow-lg">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-3 text-red-700">
+              <div className="p-2 rounded-full bg-red-100">
+                <AlertTriangle className="h-6 w-6 text-red-600" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold">Health Risk Factors</h3>
+                <p className="text-sm text-red-600 font-normal">Areas that need your attention</p>
+              </div>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {displayStats.riskFactors.map((risk, idx) => (
+                <div key={idx} className="flex items-start gap-3 p-4 bg-white rounded-xl shadow-sm border border-red-100">
+                  <AlertTriangle className="h-5 w-5 text-red-600 mt-0.5 flex-shrink-0" />
+                  <span className="text-sm text-red-800 leading-relaxed">{risk}</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Recent Activity */}
+      <Card className="border-0 shadow-lg">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-3">
+            <div className="p-2 rounded-full bg-gray-100">
+              <Clock className="h-6 w-6 text-gray-600" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold">Recent Activity</h3>
+              <p className="text-sm text-gray-600 font-normal">Your latest health activities</p>
+            </div>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {recentActivities.map((activity, idx) => (
+              <div key={idx} className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+                <div className={`p-2 rounded-full ${activity.color}`}>
+                  <activity.icon className="h-5 w-5" />
+                </div>
+                <div className="flex-1">
+                  <p className="font-medium text-gray-800">{activity.title}</p>
+                  <p className="text-sm text-gray-500">{activity.time}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Quick Access */}
+      <div>
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2 rounded-full bg-blue-100">
+            <Zap className="h-6 w-6 text-blue-600" />
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold">Quick Access</h2>
+            <p className="text-gray-600">Jump to your most used features</p>
+          </div>
+        </div>
+        <div className="grid gap-6 md:grid-cols-3">
+          {quickAccessItems.map((item) => (
+            <Card
+              key={item.title}
+              onClick={() => navigate(item.path)}
+              className={`cursor-pointer hover:shadow-xl transition-all duration-300 ${item.color} hover:scale-105 border-0 shadow-md`}
+            >
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-lg font-semibold">{item.title}</CardTitle>
+                <item.icon className={`h-6 w-6 ${item.iconColor}`} />
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm opacity-90 leading-relaxed">{item.description}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+
+      {/* Get Started Section for New Users */}
+      {(!healthStats || healthStats.totalReports === 0) && (
+        <Card className="bg-gradient-to-r from-green-600 to-blue-600 text-white border-0 shadow-xl">
+          <CardContent className="p-8 text-center">
+            <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-6 backdrop-blur-sm">
+              <Bot className="h-10 w-10 text-white" />
+            </div>
+            <h3 className="text-2xl font-bold mb-3">Get Started with VAIDYA.ai</h3>
+            <p className="text-green-100 mb-8 max-w-2xl mx-auto text-lg leading-relaxed">
+              Upload your first health report to unlock AI-powered insights, personalized recommendations, 
+              and comprehensive health tracking. Our AI will analyze your data and provide valuable health guidance.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button 
+                onClick={() => navigate('/dashboard/reports')}
+                className="bg-white text-green-600 hover:bg-gray-100 font-semibold px-6 py-3"
+                size="lg"
+              >
+                <Plus className="mr-2 h-5 w-5" />
+                Upload Your First Report
+              </Button>
+              <Button 
+                variant="outline"
+                onClick={() => navigate('/dashboard/chatbot')}
+                className="border-white/30 text-white hover:bg-white/10 font-semibold px-6 py-3"
+                size="lg"
+              >
+                <Bot className="mr-2 h-5 w-5" />
+                Chat with AI Assistant
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Loading State for Insights */}
+      {isLoadingInsights && (
+        <Card className="border-0 shadow-lg">
+          <CardContent className="p-8 text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-600 text-lg">Generating AI health insights...</p>
+            <p className="text-sm text-gray-500 mt-2">This may take a few moments</p>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };

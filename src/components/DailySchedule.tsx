@@ -131,7 +131,7 @@ const DailySchedule = () => {
                         {item.title}
                       </span>
                       {isUpcoming && (
-                        <Badge variant="secondary" className="bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300 text-xs rounded-full">
+                        <Badge variant="secondary" className="bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 text-xs rounded-full">
                           Next
                         </Badge>
                       )}

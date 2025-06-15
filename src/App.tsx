@@ -1,37 +1,46 @@
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ThemeProvider } from '@/contexts/ThemeContext';
+import { SessionProvider } from '@/contexts/SessionContext';
+import { TooltipProvider } from '@/components/ui/tooltip';
+import { Toaster } from '@/components/ui/toaster';
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { ThemeProvider } from "@/contexts/ThemeContext";
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
-import ChatBot from "./pages/ChatBot";
-import ReportGenerator from "./pages/ReportGenerator";
-import DailyTasks from "./pages/DailyTasks";
+import Layout from '@/components/Layout';
+import ProtectedRoute from '@/components/ProtectedRoute';
+import Index from '@/pages/Index';
+import Auth from '@/pages/Auth';
+import Landing from '@/pages/Landing';
+import ChatBot from '@/pages/ChatBot';
+import ReportGenerator from '@/pages/ReportGenerator';
+import DailyTasks from '@/pages/DailyTasks';
+import NotFound from '@/pages/NotFound';
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
+const App = () => {
+  return (
     <ThemeProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/chatbot" element={<ChatBot />} />
-            <Route path="/reports" element={<ReportGenerator />} />
-            <Route path="/tasks" element={<DailyTasks />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
+      <QueryClientProvider client={queryClient}>
+        <SessionProvider>
+          <TooltipProvider>
+            <Router>
+              <Routes>
+                <Route path="/" element={<Landing />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/dashboard" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
+                  <Route index element={<Index />} />
+                  <Route path="chatbot" element={<ChatBot />} />
+                  <Route path="reports" element={<ReportGenerator />} />
+                  <Route path="tasks" element={<DailyTasks />} />
+                </Route>
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Router>
+          </TooltipProvider>
+        </SessionProvider>
+      </QueryClientProvider>
     </ThemeProvider>
-  </QueryClientProvider>
-);
+  );
+};
 
 export default App;

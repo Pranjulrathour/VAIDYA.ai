@@ -1,0 +1,126 @@
+import { ElementType } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  Flame,
+  Smile,
+  Pill,
+  Apple,
+  Dumbbell,
+  BrainCircuit,
+  ChevronRight
+} from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import HealthMetrics from "@/components/HealthMetrics";
+
+
+interface ScheduleItemProps {
+  icon: ElementType;
+  time: string;
+  title: string;
+  subtitle: string;
+  completed: boolean;
+  isNext?: boolean;
+}
+
+const ScheduleItem = ({ icon: Icon, time, title, subtitle, completed, isNext }: ScheduleItemProps) => (
+  <div className={`flex items-center p-3 rounded-lg transition-all ${isNext ? 'bg-blue-100 dark:bg-blue-900/50' : 'hover:bg-gray-100 dark:hover:bg-gray-800/50'}`}>
+    <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-4 ${completed ? 'bg-green-100 dark:bg-green-900/50' : 'bg-gray-100 dark:bg-gray-800'}`}>
+      <Icon className={`w-5 h-5 ${completed ? 'text-green-500' : 'text-gray-500 dark:text-gray-400'}`} />
+    </div>
+    <div className="flex-1">
+      <p className="font-medium text-gray-800 dark:text-gray-200">{title}</p>
+      <p className="text-sm text-gray-500 dark:text-gray-400">{subtitle}</p>
+    </div>
+    <p className="text-sm font-semibold text-gray-600 dark:text-gray-300">{time}</p>
+  </div>
+);
+
+const Index = () => {
+  const navigate = useNavigate();
+
+  const schedule = [
+    { icon: Pill, time: "8:00 AM", title: "Morning Medication", subtitle: "Thyroid & Vitamin D", completed: true },
+    { icon: Apple, time: "9:00 AM", title: "Healthy Breakfast", subtitle: "Oatmeal with berries", completed: true },
+    { icon: Dumbbell, time: "11:00 AM", title: "Workout Session", subtitle: "30 min cardio", completed: false },
+    { icon: Pill, time: "8:00 PM", title: "Evening Medication", subtitle: "Iron supplement", completed: false },
+  ];
+
+  const nextTaskIndex = schedule.findIndex(task => !task.completed);
+
+  return (
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <CardTitle>Today's Snapshot</CardTitle>
+            <CardDescription>A quick look at your key health metrics.</CardDescription>
+          </CardHeader>
+          <CardContent className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="flex flex-col items-center justify-center p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+              <div className="relative h-24 w-24">
+                <svg className="h-full w-full" width="36" height="36" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="18" cy="18" r="16" fill="none" className="stroke-current text-gray-200 dark:text-gray-700" strokeWidth="2"></circle>
+                  <circle cx="18" cy="18" r="16" fill="none" className="stroke-current text-blue-500" strokeWidth="2" strokeDasharray="100" strokeDashoffset="15"></circle>
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-3xl font-bold text-blue-600 dark:text-blue-400">85</span>
+                </div>
+              </div>
+              <p className="mt-2 font-semibold">Health Score</p>
+            </div>
+            <div className="flex flex-col items-center justify-center p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+              <Flame className="h-12 w-12 text-orange-500" />
+              <p className="mt-2 font-semibold">Energy Level</p>
+              <p className="text-2xl font-bold">High</p>
+            </div>
+            <div className="flex flex-col items-center justify-center p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
+              <Smile className="h-12 w-12 text-yellow-500" />
+              <p className="mt-2 font-semibold">Daily Progress</p>
+              <Progress value={75} className="w-3/4 mt-2" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>AI Health Assistant</CardTitle>
+            <CardDescription>Get instant help and insights.</CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col items-center justify-center text-center h-full">
+            <BrainCircuit className="h-16 w-16 text-blue-500 mb-4" />
+            <p className="mb-4">Have a question? Ask Vaidya for personalized health advice.</p>
+            <Button onClick={() => navigate('/chatbot')}>
+              Start a Conversation
+              <ChevronRight className="ml-2 h-4 w-4" />
+            </Button>
+          </CardContent>
+        </Card>
+
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-5 lg:col-span-3">
+          <Card className="lg:col-span-3">
+            <CardHeader>
+              <CardTitle>Today's Schedule</CardTitle>
+              <CardDescription>Your health-related tasks for the day.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {schedule.map((item, index) => (
+                <ScheduleItem
+                  key={index}
+                  {...item}
+                  isNext={index === nextTaskIndex}
+                />
+              ))}
+            </CardContent>
+          </Card>
+
+          <div className="lg:col-span-2">
+            <HealthMetrics />
+          </div>
+        </div>
+      </div>
+);
+};
+
+export default Index; 
