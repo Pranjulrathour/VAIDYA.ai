@@ -10,47 +10,55 @@ import {
 const QuickStats = () => {
   const stats = [
     {
-      label: "Streak",
+      label: "Health Streak",
       value: "7 days",
       icon: Target,
-      color: "text-blue-500"
+      gradient: "from-blue-500 to-cyan-500",
+      bgGradient: "from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20",
+      border: "border-blue-200 dark:border-blue-800/30"
     },
     {
-      label: "Energy",
-      value: "High",
+      label: "Energy Level",
+      value: "Excellent",
       icon: Zap,
-      color: "text-blue-400"
+      gradient: "from-yellow-500 to-orange-500",
+      bgGradient: "from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20",
+      border: "border-yellow-200 dark:border-yellow-800/30"
     },
     {
       label: "Health Score",
       value: "85/100",
       icon: Shield,
-      color: "text-blue-600"
+      gradient: "from-emerald-500 to-teal-500",
+      bgGradient: "from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20",
+      border: "border-emerald-200 dark:border-emerald-800/30"
     },
     {
-      label: "Improvement",
+      label: "This Week",
       value: "+12%",
       icon: TrendingUp,
-      color: "text-blue-500"
+      gradient: "from-violet-500 to-purple-500",
+      bgGradient: "from-violet-50 to-purple-50 dark:from-violet-900/20 dark:to-purple-900/20",
+      border: "border-violet-200 dark:border-violet-800/30"
     }
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
       {stats.map((stat) => {
         const IconComponent = stat.icon;
         
         return (
           <Card 
             key={stat.label} 
-            className="border-gray-800 bg-gray-900/50 hover:bg-gray-800/50 transition-all duration-300 rounded-xl group"
+            className={`border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br ${stat.bgGradient} hover:scale-105 cursor-pointer rounded-2xl ${stat.border} border`}
           >
-            <CardContent className="p-4 md:p-6 text-center">
-              <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl bg-gray-800 flex items-center justify-center mx-auto mb-3 group-hover:bg-gray-700 transition-colors duration-300">
-                <IconComponent className={`w-6 h-6 md:w-8 md:h-8 ${stat.color}`} />
+            <CardContent className="p-6 text-center">
+              <div className={`w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-gradient-to-br ${stat.gradient} flex items-center justify-center mx-auto mb-4 shadow-lg`}>
+                <IconComponent className="w-6 h-6 md:w-8 md:h-8 text-white" />
               </div>
-              <div className="text-lg md:text-xl font-bold text-white">{stat.value}</div>
-              <div className="text-sm text-gray-400">{stat.label}</div>
+              <div className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-1">{stat.value}</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400 font-medium">{stat.label}</div>
             </CardContent>
           </Card>
         );
